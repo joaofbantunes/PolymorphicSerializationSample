@@ -1,0 +1,12 @@
+﻿[
+  {
+    "type": "A",
+    "someSharedProperty": 123,
+    "someASpecificProperty": 456
+  },
+  {
+    "type": "B",
+    "someSharedProperty": 789,
+    "someBSpecificProperty": 101112
+  }
+]
