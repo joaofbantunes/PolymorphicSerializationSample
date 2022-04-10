@@ -18,33 +18,47 @@ public class Benchmark
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
     
-    private static readonly JsonSerializerOptions PolymorphicJsonSerializerOptions = new()
+    private static readonly JsonSerializerOptions BasicPolymorphicJsonSerializerOptions = new()
     {
-        Converters = {new PolymorphicJsonConverter<HierarchyRoot>()},
+        Converters = {new BasicPolymorphicJsonConverter<HierarchyRoot>()},
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    };
+    
+    private static readonly JsonSerializerOptions TweakedPolymorphicJsonSerializerOptions = new()
+    {
+        Converters = {new TweakedPolymorphicJsonConverter<HierarchyRoot>()},
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
     private static readonly IReadOnlyCollection<HierarchyRoot> Sample
-        = Enumerable.Range(0, 10000).Select(i => new A(i)).ToArray();
+        = Enumerable.Range(0, 10000).Select(i => new A()).ToArray();
 
     private static readonly string SerializedSample
-        = JsonSerializer.Serialize(Sample, PolymorphicJsonSerializerOptions);
+        = JsonSerializer.Serialize(Sample, TweakedPolymorphicJsonSerializerOptions);
 
     [Benchmark(Baseline = true), BenchmarkCategory("Serialization")]
     public string NonPolymorphicSerialization()
         => JsonSerializer.Serialize(Sample, NonPolymorphicJsonSerializerOptions);
 
     [Benchmark, BenchmarkCategory("Serialization")]
-    public string PolymorphicSerialization()
-        => JsonSerializer.Serialize(Sample, PolymorphicJsonSerializerOptions);
+    public string BasicPolymorphicSerialization()
+        => JsonSerializer.Serialize(Sample, BasicPolymorphicJsonSerializerOptions);
+    
+    [Benchmark, BenchmarkCategory("Serialization")]
+    public string TweakedPolymorphicSerialization()
+        => JsonSerializer.Serialize(Sample, TweakedPolymorphicJsonSerializerOptions);
     
     [Benchmark(Baseline = true), BenchmarkCategory("Deserialization")]
     public IReadOnlyCollection<HierarchyRoot> NonPolymorphicDeserialization()
         => JsonSerializer.Deserialize<IReadOnlyCollection<A>>(SerializedSample, NonPolymorphicJsonSerializerOptions)!;
 
     [Benchmark, BenchmarkCategory("Deserialization")]
-    public IReadOnlyCollection<HierarchyRoot> PolymorphicDeserialization()
-        => JsonSerializer.Deserialize<IReadOnlyCollection<HierarchyRoot>>(SerializedSample, PolymorphicJsonSerializerOptions)!;
+    public IReadOnlyCollection<HierarchyRoot> BasicPolymorphicDeserialization()
+        => JsonSerializer.Deserialize<IReadOnlyCollection<HierarchyRoot>>(SerializedSample, BasicPolymorphicJsonSerializerOptions)!;
+    
+    [Benchmark, BenchmarkCategory("Deserialization")]
+    public IReadOnlyCollection<HierarchyRoot> TweakedPolymorphicDeserialization()
+        => JsonSerializer.Deserialize<IReadOnlyCollection<HierarchyRoot>>(SerializedSample, TweakedPolymorphicJsonSerializerOptions)!;
 
     internal static void DoSanityChecks()
     {
@@ -53,13 +67,13 @@ public class Benchmark
         if (SerializedSample != benchmark.NonPolymorphicSerialization())
             throw new Exception($"Something's wrong with benchmark {nameof(NonPolymorphicSerialization)}");
         
-        if (SerializedSample != benchmark.PolymorphicSerialization())
-            throw new Exception($"Something's wrong with benchmark {nameof(PolymorphicSerialization)}");
+        if (SerializedSample != benchmark.TweakedPolymorphicSerialization())
+            throw new Exception($"Something's wrong with benchmark {nameof(TweakedPolymorphicSerialization)}");
         
         if (Sample.Except(benchmark.NonPolymorphicDeserialization()).Count() != 0)
             throw new Exception($"Something's wrong with benchmark {nameof(NonPolymorphicDeserialization)}");
         
-        if (Sample.Except(benchmark.PolymorphicDeserialization()).Count() != 0)
-            throw new Exception($"Something's wrong with benchmark {nameof(PolymorphicDeserialization)}");
+        if (Sample.Except(benchmark.TweakedPolymorphicDeserialization()).Count() != 0)
+            throw new Exception($"Something's wrong with benchmark {nameof(TweakedPolymorphicDeserialization)}");
     }
 }

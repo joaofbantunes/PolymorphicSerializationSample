@@ -4,7 +4,7 @@ using Shared;
 
 var jsonSerializerOptions = new JsonSerializerOptions
 {
-    Converters = {new PolymorphicJsonConverter<HierarchyRoot>()},
+    Converters = {new BasicPolymorphicJsonConverter<HierarchyRoot>()},
     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
     WriteIndented = true
 };

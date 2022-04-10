@@ -3,11 +3,11 @@ using System.Text.Json.Serialization;
 
 namespace Shared;
 
-public class PolymorphicJsonConverter<T> : JsonConverter<T> where T : ITypeDiscriminator
+public class BasicPolymorphicJsonConverter<T> : JsonConverter<T> where T : ITypeDiscriminator
 {
     private readonly Dictionary<string, Type> _discriminatorTypeMap;
 
-    public PolymorphicJsonConverter()
+    public BasicPolymorphicJsonConverter()
     {
         var baseType = typeof(T);
         _discriminatorTypeMap =
