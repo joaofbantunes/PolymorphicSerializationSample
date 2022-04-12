@@ -67,11 +67,17 @@ public class Benchmark
         if (SerializedSample != benchmark.NonPolymorphicSerialization())
             throw new Exception($"Something's wrong with benchmark {nameof(NonPolymorphicSerialization)}");
         
+        if (SerializedSample != benchmark.BasicPolymorphicSerialization())
+            throw new Exception($"Something's wrong with benchmark {nameof(BasicPolymorphicSerialization)}");
+        
         if (SerializedSample != benchmark.TweakedPolymorphicSerialization())
             throw new Exception($"Something's wrong with benchmark {nameof(TweakedPolymorphicSerialization)}");
         
         if (Sample.Except(benchmark.NonPolymorphicDeserialization()).Count() != 0)
             throw new Exception($"Something's wrong with benchmark {nameof(NonPolymorphicDeserialization)}");
+        
+        if (Sample.Except(benchmark.BasicPolymorphicDeserialization()).Count() != 0)
+            throw new Exception($"Something's wrong with benchmark {nameof(BasicPolymorphicDeserialization)}");
         
         if (Sample.Except(benchmark.TweakedPolymorphicDeserialization()).Count() != 0)
             throw new Exception($"Something's wrong with benchmark {nameof(TweakedPolymorphicDeserialization)}");
